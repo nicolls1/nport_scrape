@@ -16,19 +16,21 @@ class PythonScraperPipeline(object):
     # Item - The item scraped
     # Spider - The spider that scraped the item
     def process_item(self, item, spider):
-        # Commit if:
+
+        # Save and commit if:
         #   Item is a Django Item
         #   Item is not currently in the database
         #       - series_lei and rep_pd_date act as primary keys
-        item.save(
-            commit=
-                  isinstance(item, DjangoItem) and
-                  not (
-                      isinstance(item, CompanyItem) and
-                      Company.objects.filter(
-                          series_lei=item.instance.series_lei,
-                          rep_pd_date=item.instance.rep_pd_date
-                      ).exists()
-                  )
-        )
+        if (isinstance(item, DjangoItem)):
+            item.save(
+                commit=
+                    not (
+                        isinstance(item, CompanyItem) and
+                        Company.objects.filter(
+                           series_lei=item.instance.series_lei,
+                           rep_pd_date=item.instance.rep_pd_date
+                        ).exists()
+                    )
+            )
+
         return item
